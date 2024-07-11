@@ -1,0 +1,21 @@
+{
+  "mainTabs": [
+    {
+      "xclass": "tdms.view.panels.IFramePage",
+      "caption": "АРМ ГИПа",
+      "root": "armgip",
+      "persistent": false
+    }
+  ],
+  "menu": [
+    {
+      "selector": {
+        "sysId": "TDMS_MENU_CONTEXT",
+        "objectType": "Object"
+      },
+      "items": [
+        "CMD_COMMAND_ADD_PASSWORD"
+      ]
+    }
+  ]
+}

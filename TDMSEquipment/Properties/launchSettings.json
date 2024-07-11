@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TDMSEquipment": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Program Files (x86)\\CSoft\\TDMS Server 7.0\\Tdms.Server.Host.exe"
+    }
+  }
+}
