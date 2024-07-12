@@ -28,39 +28,42 @@ namespace TDMSWebExtension1.Form
             _object = thisObject;
 
         }
-        //((TDMSEditCtrl)pre_form.Controls["ATTR_PASSWORD"]).Markdown = true;
         public void Form_BeforeShow(TDMSInputForm form, TDMSObject thisObject)
         {
-            ((TDMSEditCtrl)form.Controls["ATTR_DOC_TITLE"]).Markdown = true;
             ((TDMSEditCtrl)form.Controls["ATTR_TEXT"]).Markdown = true;
 
             if (form.ParentWindowType == TDMSWindowType.tdmsWindowTypePreviewDialog)
             {
                 form.Controls["BUTTON_MAKE_AS_DOC"].Visible = false;
                 form.Controls["BUTTON_MAKE_AS_PAGE"].Visible = false;
+                
             }
-            else
-            {
-                form.Controls["BUTTON_MAKE_AS_DOC"].Enabled = false;
-                form.Controls["BUTTON_MAKE_AS_PAGE"].Enabled = true;
-            }
+            
+
 
         }
 
         public void BUTTON_MAKE_AS_DOC_OnClick()
         {
+            _form.Controls["ATTR_TEXT"].Value = "";
+            _form.Controls["ATTR_DOC_TITLE"].Value = "";
+            _form.Controls["T_ATTR_DOC_TITLE"].Value = "Наименование документации";
             _form.Controls["BUTTON_MAKE_AS_DOC"].Enabled = false;
             _form.Controls["BUTTON_MAKE_AS_PAGE"].Enabled = true;
         }
         public void BUTTON_MAKE_AS_PAGE_OnClick()
         {
+            _form.Controls["ATTR_TEXT"].Value = "";
+            _form.Controls["ATTR_DOC_TITLE"].Value = "";
+            _form.Controls["T_ATTR_DOC_TITLE"].Value = "Наименование страницы документации";
             _form.Controls["BUTTON_MAKE_AS_DOC"].Enabled = true;
             _form.Controls["BUTTON_MAKE_AS_PAGE"].Enabled = false;
         }
 
-            public void Close()
+        public void BUTTON_EDIT_SELECTED_OnClick()
         {
-
+           
         }
+
     }
 }

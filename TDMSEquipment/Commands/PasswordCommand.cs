@@ -19,19 +19,15 @@ namespace TDMSEquipment
     /// Демонстрационная команда, которая будет зарегистрирована <br/>
     /// При выполнении команды выполнится метод <see cref="Execute"/>
     /// </summary>
-    [TdmsApiCommand("CMD_PASSWORD", description: "добавить пароль", roles: "SYSADMIN")]
+    [TdmsApiCommand("CMD_PASSWORD", description: "Показать/изменить пароли", roles: "SYSADMIN", icon: "29")]
     public class PasswordCommand : CommandBase
     {
         private readonly TDMSObject ThisObject;
         TDMSApplication App;
-        private string correctPassword = "primer";
+        private string correctInitLine = "i5banbm0q8bqgmy7";
                 public bool passwordWasCorrect = false;
         private TDMSObject passObject = null;
-        private byte[] IV =
-{
-    0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
-    0x09, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16
-};
+
 
         public PasswordCommand(TDMSApplication app, TDMSObject thisObject)
             : base(app)
@@ -42,43 +38,37 @@ namespace TDMSEquipment
 
         public void Execute()
         {
-            string pass ="";
+            string pass = string.Empty;
+            string initialLine = string.Empty;
+            string[] passFileLines = new string[2];
             // Open the text file using a stream reader.
             try
             {
-                using StreamReader reader = new("C:\\Users\\student\\Documents\\files\\pas");
+                passFileLines =  File.ReadAllLines("C:\\Users\\student\\Documents\\files\\pas");
+                initialLine = passFileLines[0];
 
-                // Read the stream as a string.
-                pass = reader.ReadToEnd();
+
+
             }
             catch { }
-/*
-            TDMSInputForm pre_form = App.InputForms["FORM_PREPASS"];
-            pre_form.Show();
-            try
-            {
-                pass = pre_form.Controls["ATTR_PASSWORD"].Value.ToString();   
-            }
-            catch
-            {
-            }*/
-            if (pass == correctPassword)
+
+            if (initialLine == correctInitLine)
             {
 
-
+                pass = passFileLines[1];
                 Find(App.Root);
             
-                TDMSInputForm preform = App.InputForms["FORM_PASSWORDS"];
+                TDMSInputForm passwordForm = App.InputForms["FORM_PASSWORDS"];
                 foreach (TDMSTableAttributeRow row in passObject.Attributes["ATTR_USER-PASS_TABLE"].Rows)
                 {
-                    TDMSTableAttributeRow formRow = preform.Attributes["ATTR_USER-PASS_TABLE"].Rows.Create();
+                    TDMSTableAttributeRow formRow = passwordForm.Attributes["ATTR_USER-PASS_TABLE"].Rows.Create();
                     for (int i = 0; i < formRow.Attributes.Count; i++)
                     {
 
                         using (Aes aes = Aes.Create())
                         {
-                            aes.Key = GenerateKey("asd", 256 / 8);
-                            aes.IV = GenerateKey("asd", 128 / 8);
+                            aes.Key = GenerateKey(pass, 256 / 8);
+                            aes.IV = GenerateKey(pass, 128 / 8);
                             aes.Padding = PaddingMode.PKCS7;
                             var encryptedstring = row.Attributes[i].Value.ToString();
                             List<int> values = new List<int>();
@@ -97,10 +87,10 @@ namespace TDMSEquipment
                     }
                 }
 
-                if (preform.Show() == true)
+                if (passwordForm.Show() == true)
                 {
                     passObject.Attributes["ATTR_USER-PASS_TABLE"].Rows.RemoveAll();
-                    foreach (TDMSTableAttributeRow row in preform.Attributes["ATTR_USER-PASS_TABLE"].Rows)
+                    foreach (TDMSTableAttributeRow row in passwordForm.Attributes["ATTR_USER-PASS_TABLE"].Rows)
                     {
                         TDMSTableAttributeRow newrow = passObject.Attributes["ATTR_USER-PASS_TABLE"].Rows.Create();
                         for (int i = 0; i < newrow.Attributes.Count; i++)
@@ -108,8 +98,8 @@ namespace TDMSEquipment
                             string str = "";
                             using (Aes aes = Aes.Create())
                             {
-                                aes.Key = GenerateKey("asd", 256 / 8);
-                                aes.IV = GenerateKey("asd", 128 / 8);
+                                aes.Key = GenerateKey(pass, 256 / 8);
+                                aes.IV = GenerateKey(pass, 128 / 8);
                                 aes.Padding = PaddingMode.PKCS7;
                                 var valuestring = row.Attributes[i].Value.ToString();
                                 var valuestringasbytes = System.Text.Encoding.ASCII.GetBytes(valuestring);
@@ -128,31 +118,10 @@ namespace TDMSEquipment
                                 newrow.Attributes[i].Value = str;
                             }
 
-                            //newrow.Attributes[i].Value = row.Attributes[i].Value;
                         }
                     }
                 }
-               /* for (int i = 0; i < passObject.Attributes["ATTR_USER-PASS_TABLE"].Rows.Count; i++)
-                {
-
-                    for (int j = 0; j < passObject.Attributes["ATTR_USER-PASS_TABLE"].Rows[i].Attributes.Count; j++)
-                    {
-                        using (Aes aes = Aes.Create())
-                        {
-                            aes.Key = Hash("asd");
-                            aes.IV = IV;
-                            aes.Padding = PaddingMode.PKCS7;
-                            var decryptedMessage = EncryptString(System.Text.Encoding.ASCII.GetBytes(row.Attributes[i].Value.ToString()), aes.Key, aes.IV, aes.Padding);
-                            passObject.Attributes["ATTR_USER-PASS_TABLE"].Rows[i].Attributes[j].Value = System.Text.Encoding.ASCII.GetString(decryptedMessage);
-                        }
-                        var encrypted = EncryptString(passObject.Attributes["ATTR_USER-PASS_TABLE"].Rows[i].Attributes[j].Value.ToString(), Hash("asd"), IV);
-                        string asd = System.Text.Encoding.ASCII.GetString(encrypted);
-                        passObject.Attributes["ATTR_USER-PASS_TABLE"].Rows[i].Attributes[j].Value = asd;
-                    }
-                }*/
-
             }
-
         }
 
         public void Find(TDMSObject thisobj)

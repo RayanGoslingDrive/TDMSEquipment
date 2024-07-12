@@ -16,7 +16,7 @@ namespace TDMSEquipment
     /// Демонстрационная команда, которая будет зарегистрирована <br/>
     /// При выполнении команды выполнится метод <see cref="Execute"/>
     /// </summary>
-    [TdmsApiCommand("CMD_COMMAND_ADD_DOC", description: "добавить документацию", roles: "SYSADMIN",icon: "44")]
+    [TdmsApiCommand("CMD_COMMAND_ADD_DOC", description: "добавить документацию", roles: "SYSADMIN",icon: "44",objectDefs:"OBJECT_DOCUMENTATION,OBJECT_DOC_DIV,OBJECT_FOLDER")]
     public class DocAddCommand : CommandBase
     {
         private readonly TDMSObject ThisObject;
@@ -36,6 +36,18 @@ namespace TDMSEquipment
             
             
             TDMSInputForm doc = App.InputForms["FORM_DOCUMENTATION"];
+            doc.Controls["BUTTON_MAKE_AS_DOC"].Enabled = true;
+            doc.Controls["BUTTON_MAKE_AS_PAGE"].Enabled = true;
+            if(ThisObject.ObjectDefName == "OBJECT_DOC_DIV" || ThisObject.ObjectDefName == "OBJECT_DOCUMENTATION")
+            {
+                doc.Controls["ATTR_TEXT"].Value = ThisObject.Attributes["ATTR_TEXT"].Value;
+                doc.Controls["ATTR_DOC_TITLE"].Value = ThisObject.Attributes["ATTR_DOC_TITLE"].Value;
+                if (ThisObject.ObjectDefName == "OBJECT_DOC_DIV")
+                {
+                    doc.Controls["BUTTON_MAKE_AS_DOC"].Visible = false;
+                    doc.Controls["BUTTON_MAKE_AS_PAGE"].Visible = false;
+                }
+            }
             if (doc.Show() == true)
             {
                 if (doc.Controls["BUTTON_MAKE_AS_DOC"].Enabled == false)
@@ -47,6 +59,16 @@ namespace TDMSEquipment
                 else if (doc.Controls["BUTTON_MAKE_AS_PAGE"].Enabled == false)
                 {
                     TDMSObject tobj = ThisObject.Content.Create("OBJECT_DOC_DIV");
+                    tobj.Attributes["ATTR_DOC_TITLE"].Value = doc.Controls["ATTR_DOC_TITLE"].Value;
+                    tobj.Attributes["ATTR_TEXT"].Value = doc.Controls["ATTR_TEXT"].Value;
+                }
+                else if (doc.Controls["BUTTON_MAKE_AS_PAGE"].Enabled == true && doc.Controls["BUTTON_MAKE_AS_DOC"].Enabled == true)
+                {
+                    ThisObject.Attributes["ATTR_DOC_TITLE"].Value = doc.Controls["ATTR_DOC_TITLE"].Value;
+                    ThisObject.Attributes["ATTR_TEXT"].Value = doc.Controls["ATTR_TEXT"].Value;
+                }else if(ThisObject.ObjectDefName != "OBJECT_DOC_DIV" || ThisObject.ObjectDefName != "OBJECT_DOCUMENTATION")
+                {
+                    TDMSObject tobj = ThisObject.Content.Create("OBJECT_DOCUMENTATION");
                     tobj.Attributes["ATTR_DOC_TITLE"].Value = doc.Controls["ATTR_DOC_TITLE"].Value;
                     tobj.Attributes["ATTR_TEXT"].Value = doc.Controls["ATTR_TEXT"].Value;
                 }
