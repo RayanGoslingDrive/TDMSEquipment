@@ -24,6 +24,10 @@ namespace TDMSEquipment
 
         public Task Handle(WebConfigurationMenuEvent notification, CancellationToken cancellationToken)
         {
+            if ( ThisApplication.CurrentUser.Type == TDMSUserType.tdmSystemAdministrator)
+            {
+                
+            
             var selector = notification.Selector;
             if (selector.SysId != "TDMS_TOOLBAR_OBJECT") return Task.CompletedTask;
             var commandItems = notification.CommandItems;
@@ -31,12 +35,13 @@ namespace TDMSEquipment
             long id = cmd.Icon.InternalObject.IconId;
             CommandItem item = new CommandItem { Description = cmd.Description, SysId = cmd.SysName, IconId = id.ToString() };
             commandItems.Add(item);
-           /* if (selector.SysId != "TDMS_TOOLBAR_OBJECT") return Task.CompletedTask;
-            var commandItems1 = notification.CommandItems;
-            TDMSCommand cmd1 = ThisApplication.Commands["CMD_COMMAND_ADD_DOC"];
-            long id1 = cmd1.Icon.InternalObject.IconId;
-            CommandItem item1 = new CommandItem { Description = cmd1.Description, SysId = cmd1.SysName, IconId = id1.ToString() };
-            commandItems.Add(item1);*/
+            }
+            /* if (selector.SysId != "TDMS_TOOLBAR_OBJECT") return Task.CompletedTask;
+             var commandItems1 = notification.CommandItems;
+             TDMSCommand cmd1 = ThisApplication.Commands["CMD_COMMAND_ADD_DOC"];
+             long id1 = cmd1.Icon.InternalObject.IconId;
+             CommandItem item1 = new CommandItem { Description = cmd1.Description, SysId = cmd1.SysName, IconId = id1.ToString() };
+             commandItems.Add(item1);*/
             return Task.CompletedTask;
         }
     }

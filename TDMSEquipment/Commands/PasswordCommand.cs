@@ -21,7 +21,7 @@ namespace TDMSEquipment
     /// Демонстрационная команда, которая будет зарегистрирована <br/>
     /// При выполнении команды выполнится метод <see cref="Execute"/>
     /// </summary>
-    [TdmsApiCommand("CMD_PASSWORD", description: "Показать/изменить пароли", roles: "SYSADMIN", icon: "29")]
+    [TdmsApiCommand("CMD_PASSWORD", description: "Показать/изменить пароли", icon: "29")]
     public class PasswordCommand : CommandBase
     {
         private readonly TDMSObject ThisObject;
