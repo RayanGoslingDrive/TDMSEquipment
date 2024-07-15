@@ -8,8 +8,10 @@ using System.Threading.Tasks;
 using Tdms.Api;
 using Tdms.Api.Base;
 using Tdms.Api.Ui.Controls;
+using Tdms.Api.Ui.Dialogs;
 using Tdms.Data;
 using Tdms.Tasks;
+using Microsoft.Win32;
 using TDMSWebExtension1.Form;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -26,14 +28,16 @@ namespace TDMSEquipment
         TDMSApplication App;
         private string correctInitLine = "i5banbm0q8bqgmy7";
                 public bool passwordWasCorrect = false;
+        SampleConfiguration configuration;
         private TDMSObject passObject = null;
 
 
-        public PasswordCommand(TDMSApplication app, TDMSObject thisObject)
+        public PasswordCommand(TDMSApplication app, TDMSObject thisObject, SampleConfiguration sc)
             : base(app)
         {
             App = app;
             ThisObject = thisObject;
+            configuration = sc;
         }
 
         public void Execute()
@@ -44,12 +48,19 @@ namespace TDMSEquipment
             // Open the text file using a stream reader.
             try
             {
-                passFileLines =  File.ReadAllLines("C:\\Users\\student\\Documents\\files\\pas");
-                initialLine = passFileLines[0];
+
+                if (initialLine == string.Empty)
+                {
+/*                    TDMSAddFileDlg dial = new TDMSAddFileDlg(App.Context);
+                    dial.Object = ThisObject;
+                    dial.Show();*/
+                    passFileLines = File.ReadAllLines(configuration.PasswordPath);
+                    initialLine = passFileLines[0];
+
+                }
 
 
-
-            }
+                }
             catch { }
 
             if (initialLine == correctInitLine)
